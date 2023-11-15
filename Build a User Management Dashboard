@@ -1,0 +1,249 @@
+Frontend (Vue.js)
+# Create a new Vue.js project
+vue create user-management-dashboard
+
+# Navigate to the project folder
+cd user-management-dashboard
+
+# Install additional dependencies
+npm install vue-router axios
+
+# Install JSON Server
+npm install -g json-server
+
+# Create a file db.json with some sample data
+# db.json
+{
+  "users": [
+    { "id": 1, "username": "user1", "email": "user1@example.com", "phone": "1234567890", "creationDate": "2023-01-01" },
+    { "id": 2, "username": "user2", "email": "user2@example.com", "phone": "9876543210", "creationDate": "2023-01-02" },
+    // Add more sample data as needed
+  ]
+}
+
+
+<!-- App.vue -->
+<template>
+  <div id="app">
+    <div class="tabs">
+      <router-link to="/user-details">User Details</router-link>
+      <router-link to="/account-creation">Account Creation</router-link>
+    </div>
+    <router-view />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+};
+</script>
+
+<style>
+/* Add your styling here */
+</style>
+
+
+<!-- components/UserDetails.vue -->
+<template>
+  <div>
+    <!-- Add the table and other components here -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'UserDetails',
+};
+</script>
+
+<style>
+/* Add your styling here */
+</style>
+
+
+<!-- components/AccountCreation.vue -->
+<template>
+  <div>
+    <!-- Add the form and other components here -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'AccountCreation',
+};
+</script>
+
+<style>
+/* Add your styling here */
+</style>
+
+
+// src/router/index.js
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import UserDetails from '../components/UserDetails.vue';
+import AccountCreation from '../components/AccountCreation.vue';
+
+Vue.use(VueRouter);
+
+const routes = [
+  { path: '/user-details', component: UserDetails },
+  { path: '/account-creation', component: AccountCreation },
+];
+
+const router = new VueRouter({
+  routes,
+});
+
+export default router;
+
+
+// components/UserDetails.vue
+<template>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>ID</th>
+          <th>Creation Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in users" :key="user.id">
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone }}</td>
+          <td>{{ user.id }}</td>
+          <td>{{ user.creationDate }}</td>
+          <td @click="openReportModal(user)">Generate Report</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'UserDetails',
+  data() {
+    return {
+      users: [],
+    };
+  },
+  mounted() {
+    this.fetchUserData();
+  },
+  methods: {
+    async fetchUserData() {
+      try {
+        const response = await axios.get('http://localhost:3000/users');
+        this.users = response.data;
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    },
+    openReportModal(user) {
+      // Implement modal logic to generate a report for the selected user
+    },
+  },
+};
+</script>
+
+<style>
+/* Add your styling here */
+</style>
+
+
+<!-- components/AccountCreation.vue -->
+<template>
+  <div>
+    <form @submit.prevent="submitForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" v-model="username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" v-model="password" required>
+
+      <button type="submit">Create Account</button>
+    </form>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'AccountCreation',
+  data() {
+    return {
+      username: '',
+      password: '',
+    };
+  },
+  methods: {
+    async submitForm() {
+      try {
+        // Dummy request handling - replace with actual API call
+        await axios.post('http://localhost:3000/account-creation', {
+          username: this.username,
+          password: this.password,
+        });
+        alert('Account created successfully!');
+      } catch (error) {
+        console.error('Error creating account:', error);
+      }
+    },
+  },
+};
+</script>
+
+<style>
+/* Add your styling here */
+</style>
+
+
+/* Add your styling in App.vue or a separate style file */
+#app {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tabs a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+.tabs a:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
+
+// src/main.js
+import Vue from 'vue';
+import App from './App.vue';
+import router from './router';
+
+Vue.config.productionTip = false;
+
+new Vue({
+  render: (h) => h(App),
+  router,
+}).$mount('#app');
+
+
+npm run serve
